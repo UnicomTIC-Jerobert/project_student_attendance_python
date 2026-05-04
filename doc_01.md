@@ -1,4 +1,4 @@
-***USER:
+**USER:**
 HI , im going to build a Student attendance system using wifi camera , currently im having 2 cameras one is eziviz 5mp and imou ranger 2 pro , im plan to build this with python and flask , im an experienced software engineer with web development concept , but for machine vision im new , first i create this project as proof of concept
 
 shall we build the app like this
@@ -18,7 +18,7 @@ shall we covert this app to ask question from the video data using chat bot , bu
 so plz guide me in this context
 
 ---
-*** Gemini response
+**Gemini response**
 It is an ambitious and exciting project! Since you are an experienced software engineer, the transition to computer vision (CV) will be more about understanding data flow and model inference than learning to code from scratch.
 
 Here is the corrected version of your prompt, followed by a breakdown of how to structure this system effectively.
