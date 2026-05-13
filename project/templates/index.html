@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance System Home</title>
+</head>
+<body>
+    <h1>Student Attendance System</h1>
+    <a href="/register">Register New Student</a>
+    <h2>Registered Students:</h2>
+    <ul>
+        {% for student in students %}
+            <li>{{ student }}</li>
+        {% else %}
+            <li>No students registered yet.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

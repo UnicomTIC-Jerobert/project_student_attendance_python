@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capturing Images</title>
+</head>
+<body>
+    <h1>Capturing for {{ student_id }}...</h1>
+    <p>Please look at the camera. We will take a few pictures.</p>
+    <img src="{{ url_for('video_feed', student_id=student_id) }}" width="640" height="480">
+    <p>Capture will stop automatically. You can then close this page and <a href="/">return to the home page</a>.</p>
+</body>
+</html>
