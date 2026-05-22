@@ -1,12 +1,65 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Capturing Images</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        img {
+            border: 5px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .instructions {
+            font-size: 1.2em;
+            color: #555;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Capturing for {{ student_id }}...</h1>
-    <p>Please look at the camera. We will take a few pictures.</p>
-    <img src="{{ url_for('video_feed', student_id=student_id) }}" width="640" height="480">
-    <p>Capture will stop automatically. You can then close this page and <a href="/">return to the home page</a>.</p>
+    <h1>Registering: {{ student_id }}</h1>
+    <p class="instructions">Please look at the camera and slowly move your head side to side.</p>
+
+    <!-- The Video Feed -->
+    <img id="videoStream" src="{{ url_for('video_feed', student_id=student_id) }}" width="640" height="480">
+
+    <p id="statusText">Camera is warming up...</p>
+    <p><a href="/">Cancel and return to home</a></p>
+
+    <!-- ... (Keep your HTML/CSS exactly the same) ... -->
+
+    <script>
+        const studentId = "{{ student_id }}";
+
+        // We will ask the server every 1.5 seconds if it is done
+        const checkInterval = setInterval(function () {
+            fetch(`/api/check_status/${studentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'complete') {
+                        // Stop asking the server
+                        clearInterval(checkInterval);
+
+                        // Update the text on the page
+                        document.getElementById('statusText').innerHTML = "<b>Capture Complete! Redirecting to Dashboard...</b>";
+                        document.getElementById('statusText').style.color = "green";
+
+                        // Wait 2 seconds so the user can see the "Done" frame, then redirect!
+                        setTimeout(function () {
+                            window.location.href = "/";
+                        }, 2000);
+                    }
+                })
+                .catch(err => console.error("Error checking status:", err));
+        }, 1500); // 1500 milliseconds = 1.5 seconds
+    </script>
 </body>
+
 </html>
