@@ -297,3 +297,81 @@ We can use JavaScript to automatically redirect the user back to the home page 2
 1. **No Stuttering:** The camera turns on immediately and shows a smooth countdown video without trying to save files to your hard drive at the same time.
 2. **Perfect Lighting:** The 5-second countdown gives the webcam time to adjust its lighting/exposure automatically.
 3. **Better Training Data:** `time.sleep(0.1)` forces the camera to wait a fraction of a second between photos. This gives the user time to turn their head, resulting in varied angles, which makes your face recognition AI much smarter!
+
+---
+
+**USER**
+
+great this is work nice now , but its not redirecting to dashboard page , but completeion message and captures are working well
+
+
+
+**RESPONSE**
+
+Ah, I see what happened! 
+
+The `onerror` trick in JavaScript relies on the browser throwing an error when the video stream finishes. However, modern browsers (like Chrome and Edge) have gotten "smarter"—when the Flask server politely closes the stream after the final frame, the browser just considers it "finished" instead of an "error," so the code never triggers.
+
+To make this **100% reliable**, we will use a much better method: **Polling**. 
+We will have the web page secretly ask the server, *"Hey, are all 30 images saved yet?"* every second. As soon as the server says *"Yes!"*, the page will redirect.
+
+Here is how to apply this bulletproof fix:
+
+### 1. Add a tiny Status Route to `app.py`
+Open `app.py` and paste this new route anywhere near your other API routes. This allows the webpage to check if the last image has been saved to the folder.
+
+```python
+# --- Add this new route to app.py ---
+@app.route('/api/check_status/<student_id>')
+def check_status(student_id):
+    """Checks if the registration images have finished saving."""
+    student_dir = os.path.join(DATASET_PATH, student_id)
+    
+    # We check for the last image (index is NUM_IMAGES_TO_CAPTURE - 1, so 29.jpg)
+    last_image_path = os.path.join(student_dir, f"{NUM_IMAGES_TO_CAPTURE - 1}.jpg")
+    
+    if os.path.exists(last_image_path):
+        return jsonify({"status": "complete"})
+    else:
+        return jsonify({"status": "capturing"})
+```
+
+### 2. Update the JavaScript in `capture.html`
+Open `templates/capture.html` and replace the `<script>` section at the very bottom with this new version:
+
+```html
+    <!-- ... (Keep your HTML/CSS exactly the same) ... -->
+
+    <script>
+        const studentId = "{{ student_id }}";
+        
+        // We will ask the server every 1.5 seconds if it is done
+        const checkInterval = setInterval(function() {
+            fetch(`/api/check_status/${studentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'complete') {
+                        // Stop asking the server
+                        clearInterval(checkInterval); 
+                        
+                        // Update the text on the page
+                        document.getElementById('statusText').innerHTML = "<b>Capture Complete! Redirecting to Dashboard...</b>";
+                        document.getElementById('statusText').style.color = "green";
+                        
+                        // Wait 2 seconds so the user can see the "Done" frame, then redirect!
+                        setTimeout(function() {
+                            window.location.href = "/";
+                        }, 2000);
+                    }
+                })
+                .catch(err => console.error("Error checking status:", err));
+        }, 1500); // 1500 milliseconds = 1.5 seconds
+    </script>
+</body>
+</html>
+```
+
+### Why this is the best way:
+Instead of guessing when the video stream ends, this method actually checks your computer's hard drive to see if `29.jpg` (the 30th image) has been created. 
+
+Once that file exists, the frontend immediately knows the process is 100% complete, shows the success text, waits 2 seconds for visual feedback, and smoothly sends you back to the Dashboard!
