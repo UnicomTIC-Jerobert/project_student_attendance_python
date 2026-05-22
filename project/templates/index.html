@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Attendance System Home</title>
 </head>
+
 <body>
     <h1>Student Attendance System</h1>
+    <!-- Add this line in your index.html -->
+    <a href="/logs">View Attendance Logs</a>
+    <br>
     <a href="/register">Register New Student</a>
     <h2>Registered Students:</h2>
     <ul>
         {% for student in students %}
-            <li>{{ student }}</li>
+        <li>{{ student }}</li>
         {% else %}
-            <li>No students registered yet.</li>
+        <li>No students registered yet.</li>
         {% endfor %}
     </ul>
 </body>
+
 </html>

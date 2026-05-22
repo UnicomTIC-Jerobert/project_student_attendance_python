@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Attendance Logs</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Attendance Log</h1>
+    <a href="/">Back to Home</a>
+    <table>
+        <tr>
+            <th>Student ID</th>
+            <th>Timestamp</th>
+            <th>Event Type</th>
+            <th>Camera ID</th>
+        </tr>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log[0] }}</td>
+            <td>{{ log[1] }}</td>
+            <td>{{ log[2] }}</td>
+            <td>{{ log[3] }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4">No logs yet.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>
