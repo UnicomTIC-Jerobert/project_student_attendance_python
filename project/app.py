@@ -1,3 +1,5 @@
+import threading
+from train_model import train_model
 from flask import Flask, render_template, request, Response, redirect, url_for, jsonify
 import cv2
 import os
@@ -30,6 +32,26 @@ def init_db():
 
 # Initialize the database when the app starts
 init_db()
+
+# --- API Endpoint for Triggering Training ---
+@app.route('/api/train', methods=['POST'])
+def trigger_training():
+    """Triggers the training process in a background thread."""
+    
+    # Define the function to run in the thread
+    def run_training():
+        print("[INFO] Starting background training process...")
+        train_model()
+        print("[INFO] Background training process finished.")
+
+    # Create and start the background thread
+    thread = threading.Thread(target=run_training)
+    thread.start()
+    
+    # Immediately return a response to the user
+    return jsonify({"status": "success", "message": "Training process started in the background."})
+
+# ... (The rest of your app.py code remains the same) ...
 
 # --- API Endpoint for Logging ---
 @app.route('/api/log_attendance', methods=['POST'])

@@ -33,7 +33,7 @@ def train_model():
                 image = face_recognition.load_image_file(image_path)
                 
                 # Detect the face box. We assume one face per image for training.
-                face_locations = face_recognition.face_locations(image, model="cnn") # Use "cnn" for more accuracy
+                face_locations = face_recognition.face_locations(image, model="hog") # Use "cnn" for more accuracy
                 
                 if len(face_locations) == 1:
                     # Get the encoding
